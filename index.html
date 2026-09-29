@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Scan Strategy — Database ER Diagram (SIH26055)</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f6f9;--card:#fff;--tx:#1b2430;--mu:#5d6b7c;--bd:#dde3ea;--ac:#1f5f8b;--code:#0f1a26;
+--c1:#e8eef5;--c2:#e6f2ee;--c3:#f1ecf7;--c4:#fbf1e2;--c5:#f8e9ea}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1620;--card:#172130;--tx:#e6ebf1;--mu:#93a1b3;--bd:#2a394d;--ac:#6fb1e0;--c1:#1c2b3d;--c2:#183329;--c3:#2a2140;--c4:#3a2d17;--c5:#3a1f22}}
+:root[data-theme="dark"]{--bg:#0f1620;--card:#172130;--tx:#e6ebf1;--mu:#93a1b3;--bd:#2a394d;--ac:#6fb1e0;--c1:#1c2b3d;--c2:#183329;--c3:#2a2140;--c4:#3a2d17;--c5:#3a1f22}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:linear-gradient(135deg,#0f2a44,#1f5f8b);color:#fff;padding:32px 24px}
+header h1{margin:0;font-size:28px;letter-spacing:.06em}header h2{margin:2px 0 8px;font-weight:400;font-size:20px;opacity:.9}
+header p{margin:0 0 12px;opacity:.85}.badge{display:inline-block;border:1px solid rgba(255,255,255,.5);border-radius:99px;padding:2px 12px;margin-right:6px;font-size:12px;font-weight:600}
+.wrap{display:flex;max-width:1400px;margin:0 auto}
+nav{position:sticky;top:env(safe-area-inset-top,0px);align-self:flex-start;width:230px;padding:20px 12px;flex-shrink:0;height:100vh;overflow:auto}
+nav a{display:block;padding:7px 12px;border-radius:8px;color:var(--mu);text-decoration:none;font-size:14px}nav a:hover{background:var(--c1);color:var(--tx)}
+main{flex:1;min-width:0;padding:20px 24px 60px}
+section{margin-bottom:34px}h3{font-size:22px;margin:0 0 6px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px;margin:14px 0}
+.dia{overflow-x:auto;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;text-align:center}
+.dia pre.mermaid{margin:0;display:inline-block;min-width:100%}
+.big .dia{border:2px solid var(--ac)}
+.tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:2px 10px;border-radius:99px;color:var(--tx);margin-bottom:6px}
+.t1{background:var(--c1)}.t2{background:var(--c2)}.t3{background:var(--c3)}.t4{background:var(--c4)}.t5{background:var(--c5)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--mu);margin:8px 0}.legend b{color:var(--tx);font-family:monospace}
+ol.flow{columns:2;padding-left:22px}h4{margin:0 0 4px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid .card{margin:0}.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.sum div{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;text-align:center}.sum b{display:block;font-size:30px;color:var(--ac)}.sum span{font-size:13px;color:var(--mu)}
+.life{display:flex;flex-direction:column;align-items:center;gap:0}
+.life div{width:min(420px,100%);text-align:center;padding:9px;border:1px solid var(--bd);border-radius:10px;font-weight:600;font-size:13px;letter-spacing:.05em}
+.life i{font-style:normal;color:var(--mu);line-height:1.3}
+details{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 18px}summary{cursor:pointer;font-weight:700}
+pre.sql{background:var(--code);color:#d5e3f0;padding:14px;border-radius:8px;overflow-x:auto;font-size:12px;line-height:1.5}
+footer{text-align:center;color:var(--mu);font-size:13px;padding:20px}
+@media(max-width:860px){.wrap{display:block}nav{position:static;width:auto;height:auto;display:flex;overflow-x:auto;padding:8px}nav a{white-space:nowrap}main{padding:16px}ol.flow{columns:1}.grid{grid-template-columns:1fr}}
+</style></head><body>
+<header><h1>SMART SCAN STRATEGY</h1><h2>Database ER Diagram</h2>
+<p>Database architecture for SIH26055 — Smart Scan Strategy for Electronic Warfare</p>
+<span class="badge">SIH26055</span><span class="badge">DRDO</span><span class="badge">Electronic Support</span></header>
+<div class="wrap"><nav id="nav"></nav><main>
+<div class="card"><h4>Problem in brief</h4>An Electronic Support receiver sees only a narrow instantaneous bandwidth of a much wider spectrum, so it must decide <b>where</b> and <b>when</b> to look. Open-loop sweeps waste time on inactive regions and miss intermittent, periodic, agile or newly appearing emitters. This schema documents a closed-loop adaptive scheduler (PPO is one interchangeable decision model) that learns from HIT/MISS feedback to minimise interception time. Raw PDW fields (ToA, centre frequency, pulse width, AoA, amplitude — as in the Turing Synthetic Radar Dataset) are kept strictly separate from derived Smart Scan fields. The design is passive observation and scheduling research only.</div>
+<div class="legend"><span><b>PK</b> Primary Key</span><span><b>FK</b> Foreign Key</span><span><b>||--o{</b> One-to-Many</span><span><b>||--o|</b> One-to-Zero/One</span><span><b>}o--o{</b> Many-to-Many (none needed here)</span></div>
+<div id="secs"></div>
+<section id="summary"><h3>Schema Summary</h3><div class="sum" id="sum"></div></section>
+<section id="lifecycle"><h3>Core Relationship Summary</h3><div class="card"><div class="life" id="life"></div></div></section>
+<section><h3>Future Extensibility</h3><div class="card">Real SDR observations (<code>source_type</code>), multiple / simultaneous receivers (<code>receiver_id</code> on every scan), other schedulers (<code>SCHEDULER_MODELS.model_type</code>), online model updates (versioned models, <code>ML_TRAINING_SAMPLES</code>), larger datasets and dashboards (time-indexed facts, <code>SYSTEM_EVENTS</code>) and hardware-in-the-loop runs are supported by the existing keys — no schema change required. No weapon, targeting, jamming or transmission-control entities exist by design.</div></section>
+<details id="sqlbox"><summary>Example SQL Schema (PostgreSQL, representative)</summary><pre class="sql" id="sql"></pre></details>
+</main></div><footer>SIH26055 · Smart Scan Strategy for Electronic Warfare · Static documentation</footer>
+<script>
+const S=[
+{id:"big",n:"Big Picture",t:"Big Picture — System Lifecycle",k:"t1",cnt:0,big:1,
+p:"The core lifecycle begins with a simulated RF scenario, generates emitter activity and observations, records receiver scans and detections, maintains a continuously updated RF knowledge state, produces predictions and change events, and finally generates adaptive scan decisions and evaluation metrics.",
+d:`erDiagram
+SCENARIOS ||--o{ RF_ENVIRONMENTS : contains
+RF_ENVIRONMENTS ||--o{ FREQUENCY_BANDS : divides
+RF_ENVIRONMENTS ||--o{ EMITTERS : contains
+EMITTERS ||--o{ PDW_OBSERVATIONS : generates
+RECEIVERS ||--o{ SCAN_ACTIONS : performs
+FREQUENCY_BANDS ||--o{ SCAN_ACTIONS : targets
+SCAN_ACTIONS ||--o{ DETECTIONS : produces
+FREQUENCY_BANDS ||--o{ RF_KNOWLEDGE_STATES : summarised_by
+RF_KNOWLEDGE_STATES ||--o{ PREDICTIONS : produces
+RF_KNOWLEDGE_STATES ||--o{ CHANGE_EVENTS : flags
+RF_KNOWLEDGE_STATES ||--o{ SCHEDULER_DECISIONS : informs
+SCHEDULER_DECISIONS ||--o| REWARDS : receives
+EXPERIMENT_RUNS ||--o{ SCHEDULER_DECISIONS : contains
+EXPERIMENT_RUNS ||--o{ EVALUATION_METRICS : produces
+SCENARIOS { int scenario_id PK }
+RF_ENVIRONMENTS { int environment_id PK }
+FREQUENCY_BANDS { int band_id PK }
+EMITTERS { int emitter_id PK }
+PDW_OBSERVATIONS { int observation_id PK }
+RECEIVERS { int receiver_id PK }
+SCAN_ACTIONS { int scan_id PK }
+DETECTIONS { int detection_id PK }
+RF_KNOWLEDGE_STATES { int knowledge_state_id PK }
+PREDICTIONS { int prediction_id PK }
+CHANGE_EVENTS { int change_event_id PK }
+SCHEDULER_DECISIONS { int decision_id PK }
+REWARDS { int reward_id PK }
+EXPERIMENT_RUNS { int experiment_run_id PK }
+EVALUATION_METRICS { int metric_id PK }`,
+w:"Each entity answers one question: what world (scenario/environment), who transmits (emitter), what was captured (PDW), what the receiver did (scan), what happened (detection), what the system believes (knowledge state), what it expects (prediction), what changed (change event), what it chose (decision), how good that was (reward) and how the run performed (metrics). They are deliberately not merged. In this overview <code>PREDICTIONS</code> is the TEMPORAL_PREDICTIONS table detailed in section 5.",
+r:"Environment → Band → Observation flow; Receiver → Scan → Detection flow; Knowledge → Prediction/Change → Decision → Reward; Experiment Run owns decisions and metrics. Only one-to-many and one-to-zero/one links are used.",
+flow:1},
+{id:"env",n:"Scenario & RF Environment",t:"Scenario & RF Environment",k:"t1",
+p:"Represents the simulated RF world: the scenario definition, the environment instance it creates, the frequency bands the spectrum is divided into, and the ground-truth activity of each band over time.",
+d:`erDiagram
+SCENARIOS ||--o{ RF_ENVIRONMENTS : contains
+RF_ENVIRONMENTS ||--o{ FREQUENCY_BANDS : divides
+RF_ENVIRONMENTS ||--o{ ENVIRONMENT_STATES : records
+FREQUENCY_BANDS ||--o{ ENVIRONMENT_STATES : has
+SCENARIOS {
+int scenario_id PK
+string name
+string scenario_type
+int duration_seconds
+float spectrum_min_mhz
+float spectrum_max_mhz
+int number_of_emitters
+int random_seed
+}
+RF_ENVIRONMENTS {
+int environment_id PK
+int scenario_id FK
+timestamp start_time
+timestamp end_time
+float time_resolution_us
+string status
+}
+FREQUENCY_BANDS {
+int band_id PK
+int environment_id FK
+int band_number
+float lower_frequency_mhz
+float upper_frequency_mhz
+float bandwidth_mhz
+}
+ENVIRONMENT_STATES {
+int environment_state_id PK
+int environment_id FK
+int band_id FK
+timestamp ts
+string transmission_status
+float activity_level
+bool truth_available
+}`,
+w:"A scenario (type: UNKNOWN, STATIC, PERIODIC, INTERMITTENT, FREQUENCY_AGILE, SUDDEN_CHANGE, NEW_EMITTER, DENSE_MULTI_EMITTER) plus a random seed makes runs reproducible. ENVIRONMENT_STATES is simulation ground truth used only for evaluation; the scheduler never reads it during normal operation.",
+r:"Scenario 1—N Environment; Environment 1—N Band; Environment and Band each 1—N Environment State."},
+{id:"emit",n:"Emitters & Observations",t:"Emitters & Raw RF Observations",k:"t2",
+p:"Represents RF sources and the raw pulse observations they produce. PDW_OBSERVATIONS holds only raw / simulated fields: ToA, centre frequency, pulse width, AoA and amplitude.",
+d:`erDiagram
+RF_ENVIRONMENTS ||--o{ EMITTERS : contains
+EMITTERS ||--o{ PDW_OBSERVATIONS : generates
+FREQUENCY_BANDS ||--o{ PDW_OBSERVATIONS : contains
+EMITTERS ||--o{ EMITTER_ACTIVITY_EVENTS : logs
+FREQUENCY_BANDS ||--o{ EMITTER_ACTIVITY_EVENTS : located_in
+EMITTERS {
+int emitter_id PK
+int environment_id FK
+string emitter_label
+string emitter_type
+string behaviour_type
+float frequency_min_mhz
+float frequency_max_mhz
+string activity_status
+}
+PDW_OBSERVATIONS {
+int observation_id PK
+int environment_id FK
+int emitter_id FK
+int band_id FK
+float toa_us
+float centre_frequency_mhz
+float pulse_width_us
+float aoa_deg
+float amplitude_db
+string receiver_mode
+string source_type
+}
+EMITTER_ACTIVITY_EVENTS {
+int activity_event_id PK
+int emitter_id FK
+int band_id FK
+timestamp ts
+string event_type
+float frequency_mhz
+}`,
+w:"Emitters are scoped to an environment, so 'Emitter 01' in one scenario is never the same physical emitter as in another. <code>emitter_id</code> in a PDW is nullable (a receiver may capture a pulse of unknown origin). <code>receiver_mode</code> is STARE or SCAN; <code>source_type</code> is DATASET, SIMULATED or RECEIVER. Activity events (START, STOP, HOP, APPEAR, DISAPPEAR, CHANGE) capture behaviour without bloating the emitter row.",
+r:"Environment 1—N Emitter; Emitter 1—N PDW; Band 1—N PDW; Emitter and Band each 1—N Activity Events."},
+{id:"rx",n:"Receiver & Scanning",t:"Receiver & Scanning",k:"t2",
+p:"Represents the receiver's physical constraints and what it actually does. A scan action is what the receiver does, a detection is the outcome, and a PDW is the pulse data captured — three separate concepts.",
+d:`erDiagram
+RECEIVERS ||--o{ RECEIVER_CONFIGURATIONS : configured_by
+RECEIVERS ||--o{ SCAN_ACTIONS : performs
+FREQUENCY_BANDS ||--o{ SCAN_ACTIONS : targets
+SCAN_ACTIONS ||--o{ DETECTIONS : produces
+PDW_OBSERVATIONS ||--o{ DETECTIONS : evidences
+RECEIVERS {
+int receiver_id PK
+string name
+string receiver_mode
+float total_bandwidth_mhz
+float instantaneous_bandwidth_mhz
+float minimum_dwell_us
+float maximum_dwell_us
+float sensitivity_db
+float false_alarm_rate
+}
+RECEIVER_CONFIGURATIONS {
+int configuration_id PK
+int receiver_id FK
+timestamp effective_from
+timestamp effective_to
+float dwell_us
+float retuning_delay_us
+float detection_threshold_db
+}
+SCAN_ACTIONS {
+int scan_id PK
+int receiver_id FK
+int experiment_run_id FK
+int band_id FK
+timestamp timestamp_start
+timestamp timestamp_end
+float centre_frequency_mhz
+float dwell_us
+string action_type
+string scan_status
+}
+DETECTIONS {
+int detection_id PK
+int scan_id FK
+int observation_id FK
+string detection_status
+float detection_probability
+float signal_strength_db
+bool false_alarm
+float interception_time_error_us
+}`,
+w:"Receiver specs live once in RECEIVERS; time-varying settings are versioned in RECEIVER_CONFIGURATIONS, so scans never repeat receiver metadata. action_type is SCAN, RETUNE or WAIT; detection_status is HIT, MISS or FALSE_ALARM. A MISS row has no observation, hence the nullable FK.",
+r:"Receiver 1—N Configurations and 1—N Scans; Band 1—N Scans; Scan 1—N Detections; PDW 1—N Detections (optional). Scans also reference the experiment run (section 7)."},
+{id:"know",n:"RF Knowledge & Prediction",t:"RF Knowledge, Temporal Intelligence & Change Detection",k:"t3",
+p:"This layer stores the system's evolving understanding of the RF environment. Unlike raw PDW observations, these values are derived from historical observations, HIT/MISS outcomes, temporal patterns and change detection. The scheduler uses this state to determine which frequency region should be observed next.",
+d:`erDiagram
+FREQUENCY_BANDS ||--o{ RF_KNOWLEDGE_STATES : summarised_by
+RF_KNOWLEDGE_STATES ||--o{ TEMPORAL_PREDICTIONS : produces
+RF_KNOWLEDGE_STATES ||--o{ CHANGE_EVENTS : flags
+EMITTERS ||--o{ CHANGE_EVENTS : involved_in
+RF_KNOWLEDGE_STATES {
+int knowledge_state_id PK
+int environment_id FK
+int band_id FK
+int experiment_run_id FK
+timestamp ts
+float activity_probability
+float uncertainty
+int recent_hit_count
+int recent_miss_count
+float time_since_last_scan_us
+float recent_activity_score
+string coverage_status
+float observation_value
+}
+TEMPORAL_PREDICTIONS {
+int prediction_id PK
+int knowledge_state_id FK
+int band_id FK
+timestamp prediction_time
+timestamp target_time
+float predicted_activity_probability
+float prediction_horizon_us
+float prediction_confidence
+string pattern_type
+}
+CHANGE_EVENTS {
+int change_event_id PK
+int environment_id FK
+int band_id FK
+int emitter_id FK
+timestamp ts
+string change_type
+float previous_frequency_mhz
+float new_frequency_mhz
+float severity
+float detection_confidence
+string response_status
+}`,
+w:"These tables do not represent raw dataset fields. They represent information inferred and maintained by the Smart Scan system. Knowledge is per band, per run, so different strategies keep independent beliefs. coverage_status is FRESH, STALE or VERY_STALE; pattern_type is STABLE, PERIODIC, INTERMITTENT, AGILE or UNKNOWN; change_type includes FREQUENCY_SHIFT, ACTIVITY_CHANGE, NEW_EMITTER, EMITTER_LOST, PATTERN_CHANGE, DENSITY_CHANGE. Change events also link to the environment; band and emitter are nullable.",
+r:"Band 1—N Knowledge States; Knowledge State 1—N Predictions and 1—N Change Events; Emitter 1—N Change Events (optional)."},
+{id:"sched",n:"Smart Scheduler",t:"Smart Scheduler / PPO Decisions",k:"t4",
+p:"Represents the adaptive scheduler's decisions. PPO is only one decision-making model; the schema is algorithm-independent so baselines (greedy, random, sequential, Thompson sampling) are stored in exactly the same way.",
+d:`erDiagram
+SCHEDULER_MODELS ||--o{ SCHEDULER_DECISIONS : makes
+EXPERIMENT_RUNS ||--o{ SCHEDULER_DECISIONS : contains
+RF_KNOWLEDGE_STATES ||--o{ SCHEDULER_DECISIONS : informs
+FREQUENCY_BANDS ||--o{ SCHEDULER_DECISIONS : selected
+SCHEDULER_DECISIONS ||--o{ SCHEDULER_STATE_SNAPSHOTS : captures
+SCHEDULER_DECISIONS ||--o| REWARDS : receives
+SCHEDULER_DECISIONS ||--o{ DECISION_REASONS : explained_by
+SCHEDULER_MODELS {
+int model_id PK
+string model_name
+string model_type
+string version
+string status
+}
+SCHEDULER_DECISIONS {
+int decision_id PK
+int experiment_run_id FK
+int model_id FK
+int knowledge_state_id FK
+int selected_band_id FK
+timestamp ts
+float selected_frequency_mhz
+float selected_dwell_us
+float decision_confidence
+string action_status
+}
+SCHEDULER_STATE_SNAPSHOTS {
+int snapshot_id PK
+int decision_id FK
+float activity_probability
+float uncertainty
+float time_since_last_scan_us
+float predicted_activity
+string change_level
+float scan_cost
+float remaining_scan_budget
+}
+REWARDS {
+int reward_id PK
+int decision_id FK
+float detection_reward
+float interception_delay_penalty
+float scan_cost_penalty
+float miss_penalty
+float staleness_penalty
+float total_reward
+}
+DECISION_REASONS {
+int reason_id PK
+int decision_id FK
+string factor
+float factor_value
+float contribution
+string explanation
+}`,
+w:"Model type is PPO, GREEDY, RANDOM, SEQUENTIAL, THOMPSON_SAMPLING or OTHER. The full state seen at decision time lives in SCHEDULER_STATE_SNAPSHOTS instead of widening the decision row. REWARDS are split into components for analysis. DECISION_REASONS (factors: ACTIVITY_PROBABILITY, UNCERTAINTY, RECENCY, TEMPORAL_PREDICTION, CHANGE_LEVEL, SCAN_COST, COVERAGE) makes the prototype explainable, e.g. 'Band 12 was selected because predicted activity is increasing while the region has become stale.'",
+r:"Model, Run, Knowledge State and Band each 1—N Decisions; Decision 1—N Snapshots, 1—0..1 Reward, 1—N Reasons."},
+{id:"exp",n:"Experiments & Evaluation",t:"Experiments, Training & Evaluation",k:"t5",
+p:"Stores repeatable experiment runs, baseline comparisons, ablations, performance metrics and the (state, action, reward, next state) samples for ML training.",
+d:`erDiagram
+SCENARIOS ||--o{ EXPERIMENT_RUNS : tested_in
+RECEIVERS ||--o{ EXPERIMENT_RUNS : used_in
+SCHEDULER_MODELS ||--o{ EXPERIMENT_RUNS : evaluated_in
+EXPERIMENT_RUNS ||--o{ BASELINE_RUNS : compared_with
+EXPERIMENT_RUNS ||--o{ EVALUATION_METRICS : produces
+EXPERIMENT_RUNS ||--o{ METRIC_SNAPSHOTS : samples
+EXPERIMENT_RUNS ||--o{ ABLATION_RUNS : varies
+EXPERIMENT_RUNS ||--o{ ML_TRAINING_SAMPLES : yields
+RF_KNOWLEDGE_STATES ||--o{ ML_TRAINING_SAMPLES : state_of
+SCHEDULER_DECISIONS ||--o{ ML_TRAINING_SAMPLES : action_of
+EXPERIMENT_RUNS {
+int experiment_run_id PK
+int scenario_id FK
+int receiver_id FK
+int model_id FK
+timestamp start_time
+timestamp end_time
+int random_seed
+string status
+int total_scans
+int total_hits
+int total_misses
+}
+BASELINE_RUNS {
+int baseline_run_id PK
+int experiment_run_id FK
+string strategy_name
+string strategy_version
+}
+EVALUATION_METRICS {
+int metric_id PK
+int experiment_run_id FK
+timestamp ts
+float probability_detection
+float probability_false_alarm
+float sensitivity
+float interception_rate
+float average_interception_time_us
+float average_interception_time_error_us
+float percentage_correct_predictions
+float average_reward
+float spectrum_coverage
+float spectrum_staleness
+float recovery_time_after_change_us
+}
+METRIC_SNAPSHOTS {
+int snapshot_id PK
+int experiment_run_id FK
+timestamp ts
+string metric_name
+float metric_value
+}
+ABLATION_RUNS {
+int ablation_id PK
+int experiment_run_id FK
+string configuration_name
+bool temporal_prediction_enabled
+bool change_detection_enabled
+bool uncertainty_enabled
+bool recency_enabled
+}
+ML_TRAINING_SAMPLES {
+int sample_id PK
+int experiment_run_id FK
+int knowledge_state_id FK
+int decision_id FK
+json state_snapshot
+string action
+float reward
+json next_state_snapshot
+bool terminal
+}`,
+w:"Every run pins scenario, receiver, model and seed, so it is reproducible, and several models can be run on the same scenario for a fair PPO-vs-baseline comparison. EVALUATION_METRICS carries the SIH-required measures (Pd, Pfa, sensitivity, interception rate, interception time and its error, % correct predictions, reward, coverage/staleness, recovery time). Snapshot columns are JSONB in PostgreSQL.",
+r:"Scenario, Receiver and Model each 1—N Runs; Run 1—N Baseline Runs, Metrics, Metric Snapshots, Ablations, Training Samples; Knowledge State and Decision each 1—N Training Samples."},
+{id:"evt",n:"System Events",t:"System Events / Audit",k:"t1",
+p:"A small monitoring layer that feeds the live dashboard and audit timeline with passive system events.",
+d:`erDiagram
+EXPERIMENT_RUNS ||--o{ SYSTEM_EVENTS : logs
+FREQUENCY_BANDS ||--o{ SYSTEM_EVENTS : concerns
+EMITTERS ||--o{ SYSTEM_EVENTS : concerns
+SYSTEM_EVENTS {
+int event_id PK
+int experiment_run_id FK
+timestamp ts
+string event_type
+string severity
+string message
+int band_id FK
+int emitter_id FK
+}`,
+w:"Event types: SYSTEM_START, SYSTEM_STOP, NEW_EMITTER, ENVIRONMENT_CHANGE, DETECTION, MISS, FALSE_ALARM, SCHEDULER_UPDATE, HIGH_UNCERTAINTY, ERROR. Kept separate from change_events so operational logging never pollutes intelligence data.",
+r:"Run 1—N Events; Band and Emitter each optionally 1—N Events."}
+];
+const G={env:["Scenario",1],emit:["Observation",2],rx:["Receiver",3],know:["Intelligence",4],sched:["Scheduler",5],exp:["Evaluation",6],evt:["Audit / Events",7]};
+const FLOW=["Scenario creates an RF environment.","The environment contains frequency bands and emitters.","Emitters generate RF pulse observations (PDWs).","The receiver scans limited-bandwidth regions.","Each scan yields a detection, miss or false alarm.","Observations and outcomes update RF knowledge.","Temporal prediction estimates future activity.","Change detection identifies environmental changes.","The scheduler uses the knowledge state to pick the next scan.","Reward records feedback on the decision.","Experiment runs collect all actions and outcomes.","Evaluation metrics measure system performance."];
+const nav=document.getElementById("nav"),secs=document.getElementById("secs");
+S.forEach((s,i)=>{
+ nav.insertAdjacentHTML("beforeend",`<a href="#${s.id}">${i+1}. ${s.n}</a>`);
+ secs.insertAdjacentHTML("beforeend",`<section id="${s.id}" class="${s.big?"big":""}"><span class="tag ${s.k}">Section ${i+1}</span><h3>${s.t}</h3><p>${s.p}</p>
+ <div class="dia"><pre class="mermaid">${s.d}</pre></div>
+ ${s.flow?`<div class="card"><h4>Data flow</h4><ol class="flow">${FLOW.map(f=>`<li>${f}</li>`).join("")}</ol></div>`:""}
+ <div class="grid"><div class="card"><h4>Why these tables exist</h4>${s.w}</div><div class="card"><h4>Key relationships</h4>${s.r}</div></div></section>`);
+});
+nav.insertAdjacentHTML("beforeend",`<a href="#summary">Schema Summary</a><a href="#sqlbox">Example SQL</a>`);
+// dynamic counts from the actual diagram source
+const cnt={},all=new Set();
+S.forEach(s=>{if(s.cnt===0)return;const m=[...s.d.matchAll(/^(\w+) \{\s*$/gm)].map(x=>x[1]);cnt[s.id]=m.length;m.forEach(x=>all.add(x));});
+const sm=document.getElementById("sum");
+sm.insertAdjacentHTML("beforeend",`<div><b>${all.size}</b><span>Total Core Tables</span></div>`);
+Object.keys(G).forEach(k=>sm.insertAdjacentHTML("beforeend",`<div><b>${cnt[k]}</b><span>${G[k][0]} Tables</span></div>`));
+sm.insertAdjacentHTML("beforeend",`<div><b>${[...S.map(s=>s.d)].join("").match(/\|\|--o[{|]/g).length}</b><span>Relationships (all diagrams)</span></div>`);
+const L=["SCENARIO","RF ENVIRONMENT","EMITTERS","PDW OBSERVATIONS","RECEIVER SCANS","DETECTIONS","RF KNOWLEDGE","PREDICTIONS + CHANGE DETECTION","SCHEDULER DECISION","REWARD","EVALUATION"],lc=["c1","c1","c2","c2","c2","c2","c3","c3","c4","c4","c5"];
+document.getElementById("life").innerHTML=L.map((x,i)=>`<div style="background:var(--${lc[i]})">${x}</div>`).join('<i>↓</i>')+'<i>↺ feedback: next scan is chosen from the updated knowledge state</i>';
+document.getElementById("sql").textContent=`CREATE TABLE scenarios(scenario_id SERIAL PRIMARY KEY,name TEXT NOT NULL,scenario_type TEXT NOT NULL CHECK(scenario_type IN('UNKNOWN','STATIC','PERIODIC','INTERMITTENT','FREQUENCY_AGILE','SUDDEN_CHANGE','NEW_EMITTER','DENSE_MULTI_EMITTER')),duration_seconds INT,spectrum_min_mhz NUMERIC,spectrum_max_mhz NUMERIC,number_of_emitters INT,random_seed BIGINT,created_at TIMESTAMPTZ DEFAULT now());
+CREATE TABLE rf_environments(environment_id SERIAL PRIMARY KEY,scenario_id INT NOT NULL REFERENCES scenarios,start_time TIMESTAMPTZ,end_time TIMESTAMPTZ,spectrum_min_mhz NUMERIC,spectrum_max_mhz NUMERIC,time_resolution_us NUMERIC,status TEXT);
+CREATE TABLE frequency_bands(band_id SERIAL PRIMARY KEY,environment_id INT NOT NULL REFERENCES rf_environments,band_number INT,lower_frequency_mhz NUMERIC,upper_frequency_mhz NUMERIC,centre_frequency_mhz NUMERIC,bandwidth_mhz NUMERIC,status TEXT,UNIQUE(environment_id,band_number));
+CREATE TABLE emitters(emitter_id SERIAL PRIMARY KEY,environment_id INT NOT NULL REFERENCES rf_environments,emitter_label TEXT,emitter_type TEXT,behaviour_type TEXT,initial_frequency_mhz NUMERIC,frequency_min_mhz NUMERIC,frequency_max_mhz NUMERIC,activity_status TEXT,first_seen_at TIMESTAMPTZ,last_seen_at TIMESTAMPTZ);
+CREATE TABLE pdw_observations(observation_id BIGSERIAL PRIMARY KEY,environment_id INT NOT NULL REFERENCES rf_environments,emitter_id INT REFERENCES emitters,band_id INT NOT NULL REFERENCES frequency_bands,timestamp TIMESTAMPTZ,toa_us DOUBLE PRECISION,centre_frequency_mhz DOUBLE PRECISION,pulse_width_us DOUBLE PRECISION,aoa_deg DOUBLE PRECISION,amplitude_db DOUBLE PRECISION,receiver_mode TEXT CHECK(receiver_mode IN('STARE','SCAN')),source_type TEXT CHECK(source_type IN('DATASET','SIMULATED','RECEIVER')));
+CREATE TABLE receivers(receiver_id SERIAL PRIMARY KEY,name TEXT,receiver_mode TEXT,total_bandwidth_mhz NUMERIC,instantaneous_bandwidth_mhz NUMERIC,minimum_dwell_us NUMERIC,maximum_dwell_us NUMERIC,retuning_delay_us NUMERIC,sensitivity_db NUMERIC,false_alarm_rate NUMERIC,status TEXT);
+CREATE TABLE scheduler_models(model_id SERIAL PRIMARY KEY,model_name TEXT,model_type TEXT CHECK(model_type IN('PPO','GREEDY','RANDOM','SEQUENTIAL','THOMPSON_SAMPLING','OTHER')),version TEXT,description TEXT,created_at TIMESTAMPTZ DEFAULT now(),status TEXT);
+CREATE TABLE experiment_runs(experiment_run_id SERIAL PRIMARY KEY,scenario_id INT NOT NULL REFERENCES scenarios,receiver_id INT NOT NULL REFERENCES receivers,model_id INT NOT NULL REFERENCES scheduler_models,start_time TIMESTAMPTZ,end_time TIMESTAMPTZ,random_seed BIGINT,status TEXT,total_scans INT,total_hits INT,total_misses INT);
+CREATE TABLE scan_actions(scan_id BIGSERIAL PRIMARY KEY,receiver_id INT NOT NULL REFERENCES receivers,experiment_run_id INT NOT NULL REFERENCES experiment_runs,band_id INT NOT NULL REFERENCES frequency_bands,timestamp_start TIMESTAMPTZ,timestamp_end TIMESTAMPTZ,centre_frequency_mhz NUMERIC,dwell_us NUMERIC,action_type TEXT CHECK(action_type IN('SCAN','RETUNE','WAIT')),scan_status TEXT);
+CREATE TABLE detections(detection_id BIGSERIAL PRIMARY KEY,scan_id BIGINT NOT NULL REFERENCES scan_actions,observation_id BIGINT REFERENCES pdw_observations,detection_time TIMESTAMPTZ,detection_status TEXT CHECK(detection_status IN('HIT','MISS','FALSE_ALARM')),detection_probability NUMERIC,signal_strength_db NUMERIC,false_alarm BOOLEAN,interception_time_error_us NUMERIC);
+CREATE TABLE rf_knowledge_states(knowledge_state_id BIGSERIAL PRIMARY KEY,environment_id INT NOT NULL REFERENCES rf_environments,band_id INT NOT NULL REFERENCES frequency_bands,experiment_run_id INT NOT NULL REFERENCES experiment_runs,timestamp TIMESTAMPTZ,activity_probability NUMERIC CHECK(activity_probability BETWEEN 0 AND 1),uncertainty NUMERIC,recent_hit_count INT,recent_miss_count INT,time_since_last_scan_us NUMERIC,recent_activity_score NUMERIC,coverage_status TEXT CHECK(coverage_status IN('FRESH','STALE','VERY_STALE')),observation_value NUMERIC);
+CREATE TABLE scheduler_decisions(decision_id BIGSERIAL PRIMARY KEY,experiment_run_id INT NOT NULL REFERENCES experiment_runs,model_id INT NOT NULL REFERENCES scheduler_models,knowledge_state_id BIGINT NOT NULL REFERENCES rf_knowledge_states,timestamp TIMESTAMPTZ,selected_band_id INT NOT NULL REFERENCES frequency_bands,selected_frequency_mhz NUMERIC,selected_dwell_us NUMERIC,decision_confidence NUMERIC,decision_reason TEXT,observation_value NUMERIC,action_status TEXT);
+CREATE TABLE rewards(reward_id BIGSERIAL PRIMARY KEY,decision_id BIGINT UNIQUE NOT NULL REFERENCES scheduler_decisions,detection_reward NUMERIC,interception_delay_penalty NUMERIC,scan_cost_penalty NUMERIC,miss_penalty NUMERIC,staleness_penalty NUMERIC,total_reward NUMERIC,reward_timestamp TIMESTAMPTZ);
+CREATE TABLE evaluation_metrics(metric_id BIGSERIAL PRIMARY KEY,experiment_run_id INT NOT NULL REFERENCES experiment_runs,timestamp TIMESTAMPTZ,probability_detection NUMERIC,probability_false_alarm NUMERIC,sensitivity NUMERIC,interception_rate NUMERIC,average_interception_time_us NUMERIC,average_interception_time_error_us NUMERIC,percentage_correct_predictions NUMERIC,average_reward NUMERIC,cumulative_reward NUMERIC,spectrum_coverage NUMERIC,spectrum_staleness NUMERIC,recovery_time_after_change_us NUMERIC);`;
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script>
+window.addEventListener("load",()=>{
+ if(!window.mermaid)return;
+ const dark=matchMedia("(prefers-color-scheme: dark)").matches;
+ mermaid.initialize({startOnLoad:false,theme:dark?"dark":"default",er:{useMaxWidth:false}});
+ setTimeout(()=>{
+  const todo=[...document.querySelectorAll("pre.mermaid")].filter(n=>!n.querySelector("svg")&&!n.dataset.processed);
+  if(todo.length)mermaid.run({nodes:todo}).catch(e=>console.error(e));
+ },600);
+});
+</script>
+<!--claude-mermaid-runtime-begin:3477-->
+<style>.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}</style>
+<script src="/_runtime/mermaid-11.16.1.min.js"></script>
+<script>(function(){
+var CFG={"palettes":{"light":{"surface":"#f4efe4","text":"#42392e","line":"#8a7f6d","border":"#7a6c52","bg":"#fffdf8"},"dark":{"surface":"#262b34","text":"#f2f3f5","line":"#a8adb8","border":"#9aa4b8","bg":"#1f232b"}}};
+if(typeof mermaid==='undefined')return;
+var pres=Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function(p){if(p.hasAttribute('data-claude-mermaid-claimed'))return false;p.setAttribute('data-claude-mermaid-claimed','1');return true;});
+if(!pres.length)return;
+var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
+var root=document.documentElement;
+var items=pres.map(function(pre){
+var mount=document.createElement('div');mount.className='mermaid-diagram';
+return {pre:pre,mount:mount,src:pre.textContent||''};
+});
+var seq=0;
+var renderGen=0;
+var lastKey='';
+function pageBg(fallback){
+var els=[document.body,document.documentElement];
+for(var i=0;i<els.length;i++){
+var c=els[i]&&getComputedStyle(els[i]).backgroundColor;
+if(c&&c!=='transparent'&&c!=='rgba(0, 0, 0, 0)')return c;
+}
+return fallback;
+}
+function render(){
+var theme=root.getAttribute('data-theme');
+var dark=theme==='dark'||(!!(mq&&mq.matches)&&theme!=='light');
+var pal=dark?CFG.palettes.dark:CFG.palettes.light;
+var bg=pageBg(pal.bg);
+var key=(dark?'d':'l')+'|'+bg;
+if(key===lastKey)return;
+lastKey=key;
+var gen=++renderGen;
+var font=getComputedStyle(document.body).fontFamily||'sans-serif';
+var nat={useMaxWidth:false};
+mermaid.initialize({
+startOnLoad:false,securityLevel:'strict',theme:'base',
+flowchart:nat,sequence:nat,er:nat,state:nat,class:nat,pie:nat,
+gantt:nat,journey:nat,timeline:nat,gitGraph:nat,mindmap:nat,xyChart:nat,
+quadrantChart:nat,sankey:nat,c4:nat,requirement:nat,block:nat,
+packet:nat,kanban:nat,architecture:nat,radar:nat,
+themeVariables:{background:bg,mainBkg:pal.surface,primaryColor:pal.surface,
+primaryTextColor:pal.text,lineColor:pal.line,primaryBorderColor:pal.border,
+nodeBorder:pal.border,clusterBorder:pal.border,edgeLabelBackground:bg,
+clusterBkg:'rgba(127,127,127,0.07)',titleColor:pal.text,
+darkMode:dark,rowOdd:bg,rowEven:'rgba(127,127,127,0.07)',
+attributeBackgroundColorOdd:bg,attributeBackgroundColorEven:'rgba(127,127,127,0.07)',
+fontSize:'16px',fontFamily:font},
+themeCSS:'.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }'
+});
+items.forEach(function(it){
+var id='claude-mermaid-'+seq++;
+mermaid.render(id,it.src).then(function(r){
+if(gen!==renderGen)return;
+var prev=it.pre.previousElementSibling;
+if(prev&&prev.className==='mermaid-diagram'&&prev!==it.mount)return;
+it.mount.innerHTML=r.svg;
+if(!it.mount.parentNode)it.pre.parentNode.insertBefore(it.mount,it.pre);
+it.pre.style.display='none';
+},function(){
+var scratch=document.getElementById(id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+scratch=document.getElementById('d'+id);
+if(scratch)scratch.parentNode.removeChild(scratch);
+if(gen!==renderGen)return;
+if(it.mount.parentNode)it.mount.parentNode.removeChild(it.mount);
+it.pre.style.display='';
+});
+});
+}
+render();
+if(mq&&mq.addEventListener)mq.addEventListener('change',render);
+if(typeof MutationObserver!=='undefined')new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+})();</script>
+<!--claude-mermaid-runtime-end-->
+</body></html>
